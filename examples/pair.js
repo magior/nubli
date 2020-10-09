@@ -12,34 +12,38 @@ nubli.onReadyToScan()
     });
 
 nubli.on("smartLockDiscovered", (smartlock) => {
-    nubli.stopScanning();
+    if(smartlock.device.address === '54-d2-72-54-1a-95'){
+        nubli.stopScanning();
 
-    smartlock.on("connected", () => {
-        console.log("connected");
-    });
-
-    smartlock.connect()
-        .then(async () => {
-            if (smartlock.configExists()) {
-                await smartlock.readConfig();
-            }
-
-            if (smartlock.paired) {
-                console.log("already paired");
-                await smartlock.disconnect();
-                process.exit(0);
-            } else {
-                smartlock.pair()
-                    .then(async () => {
-                        console.log("successfully paired");
-                        await smartlock.saveConfig(nubli.configPath);
-                        await smartlock.disconnect();
-                        process.exit(0);
-                    })
-                    .catch((error) => {
-                        console.log("Pairing unsuccessful - error message: " + error);
-                        process.exit(1);
-                    });
-            }
+        smartlock.on("connected", () => {
+            console.log("connected");
         });
+
+        smartlock.connect()
+            .then(async () => {
+                if (smartlock.configExists()) {
+                    await smartlock.readConfig();
+                }
+
+                if (smartlock.paired) {
+                    console.log("already paired");
+                    await smartlock.disconnect();
+                    process.exit(0);
+                } else {
+                    smartlock.pair()
+                        .then(async () => {
+                            console.log("successfully paired");
+                            await smartlock.saveConfig(nubli.configPath);
+                            await smartlock.disconnect();
+                            process.exit(0);
+                        })
+                        .catch((error) => {
+                            console.log("Pairing unsuccessful - error message: " + error);
+                            process.exit(1);
+                        });
+                }
+            }, (err) => {
+                console.log(err);
+            });
+    }
 });

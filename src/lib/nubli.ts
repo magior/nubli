@@ -1,4 +1,4 @@
-import Noble from "noble";
+import Noble from "@abandonware/noble";
 import { PeripheralFilter } from "./peripheralFilter";
 import { SmartLockPeripheralFilter } from "./smartLockPeripheralFilter";
 import { SmartLock } from "./smartLock";
@@ -23,7 +23,7 @@ export class Nubli extends Events.EventEmitter {
         }
 
         // Override HCI so we can scan passively.
-        this.noble._bindings._hci.setScanParameters = () => {
+        (this.noble as any)._bindings._hci.setScanParameters = () => {
             var cmd = new Buffer(11);
 
             let HCI_COMMAND_PKT = 0x01;
@@ -48,8 +48,8 @@ export class Nubli extends Events.EventEmitter {
             cmd.writeUInt16LE(0x0010, 7); // window, ms * 1.6
             cmd.writeUInt8(0x00, 9); // own address type: 0 -> public, 1 -> random
             cmd.writeUInt8(0x00, 10); // filter: 0 -> all event types
-            
-            this.noble._bindings._hci._socket.write(cmd);
+
+            (this.noble as any)._bindings._hci._socket.write(cmd);
         }
 
         this.noble.on('discover', (peripheral: Noble.Peripheral) => this.peripheralDiscovered(peripheral));
