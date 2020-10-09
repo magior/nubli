@@ -5,7 +5,6 @@ export class SmartLockPeripheralFilter implements PeripheralFilter {
     }
 
     handle(peripheral: import("@abandonware/noble").Peripheral): boolean {
-
         // if (data !== undefined && data !== null && data.length == 25) {
         //     let type: number = data.readUInt8(2);
         //     let dataLength: number = data.readUInt8(3);
@@ -20,6 +19,8 @@ export class SmartLockPeripheralFilter implements PeripheralFilter {
         //     }
         // } else {
         let name: string = peripheral.advertisement.localName;
+        console.log('Checking filter', name)
+        console.log(name?.slice(5))
         return name!==undefined && peripheral.advertisement.localName.slice(5)===this.name;
         // }
 
