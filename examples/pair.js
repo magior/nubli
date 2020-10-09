@@ -42,7 +42,7 @@ nubli.on("smartLockDiscovered", (smartlock) => {
                             process.exit(1);
                         });
                 }
-            }, (err) => {
+            }, (err) => { 
                 console.log(err);
             });
     }
