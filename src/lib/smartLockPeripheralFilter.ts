@@ -2,7 +2,7 @@ import { PeripheralFilter } from "./peripheralFilter";
 import { SmartLock } from "./smartLock";
 
 export class SmartLockPeripheralFilter implements PeripheralFilter {
-    constructor(public name: string, public macAddress?: string) {
+    constructor(public macAddress?: string) {
     }
 
     handle(peripheral: import("@abandonware/noble").Peripheral): boolean {

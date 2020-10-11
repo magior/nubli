@@ -1,4 +1,5 @@
 const nubli = require('../dist/index.js').default;
+nubli.peripheralFilter.macAddress = '54:D2:72:54:1A:95';
 
 nubli.setDebug(true);
 

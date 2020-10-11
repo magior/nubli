@@ -13,7 +13,7 @@ export class Nubli extends Events.EventEmitter {
     private _scanning: boolean = false;
     private activeScanning: boolean = false;
 
-    constructor(peripheralFilter: PeripheralFilter = new SmartLockPeripheralFilter('', ''), configPath?: string) {
+    constructor(peripheralFilter: PeripheralFilter = new SmartLockPeripheralFilter(), configPath?: string) {
         super();
 
         this.peripheralFilter = peripheralFilter;
