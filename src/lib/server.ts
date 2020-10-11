@@ -6,7 +6,7 @@ import { SmartLock } from "./smartLock";
 const app = express();
 const port = 8080; // default port to listen
 
-const nubli = new Nubli(new SmartLockPeripheralFilter('15541A95'));
+const nubli = new Nubli(new SmartLockPeripheralFilter('15541A95', '54:D2:72:54:1A:95'));
 
 nubli.on('state', (state) => {
     console.log('state change', state);
@@ -30,6 +30,10 @@ app.get("/:name/lock", (req, res) => {
         smartlock.on("connected", () => {
             console.log("connected");
         });
+
+        smartlock.on('rssiUpdate', (rssi) => {
+            console.log(rssi);
+        })
 
         if (smartlock.configExists()) {
             await smartlock.readConfig();
