@@ -9,7 +9,7 @@ export class SmartLockPeripheralFilter implements PeripheralFilter {
         let data: Buffer = peripheral.advertisement.manufacturerData;
 
         if (this.macAddress) {
-            return peripheral.address.replace(/-/g, ':')===this.macAddress.toLowerCase();
+            return peripheral.address.replace(/-|:/g, '')===this.macAddress.replace(/-|:/g, '').toLowerCase();
         } else if (data!==undefined && data!==null && data.length==25) {
             let type: number = data.readUInt8(2);
             let dataLength: number = data.readUInt8(3);

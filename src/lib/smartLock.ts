@@ -187,7 +187,7 @@ export class SmartLock extends Events.EventEmitter {
         });
     }
 
-    async pair(asBridge: boolean = true): Promise<void> {
+    async pair(name: string, asBridge: boolean = true): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             if (!this.isConnected()) {
                 reject("Device is not connected");
@@ -209,7 +209,7 @@ export class SmartLock extends Events.EventEmitter {
                 await NukiConfig.configExists(this.device.uuid, this.nubli.configPath);
                 nukiConfig = await NukiConfig.readConfig(this.device.uuid, this.nubli.configPath);
             } catch (err) {
-                nukiConfig = new NukiConfig(this.device.uuid, false);
+                nukiConfig = new NukiConfig(name, this.device.uuid, false);
             }
 
             let pairer: SmartLockPairer = new SmartLockPairer(this.nukiPairingCharacteristic!, nukiConfig, asBridge);

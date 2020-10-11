@@ -11,8 +11,9 @@ export class NukiConfig {
     private _slUUID: Uint8Array | undefined = undefined;
     private _uuid: string;
     private _paired: boolean;
+    private _name: string;
 
-    constructor(uuid: string, paired: boolean = false, credentials?: Credentials, appId?: number, authorizationId?: number, slUUID?: Uint8Array) {
+    constructor(name: string, uuid: string, paired: boolean = false, credentials?: Credentials, appId?: number, authorizationId?: number, slUUID?: Uint8Array) {
         if (credentials == null) {
             credentials = new Credentials();
         }
@@ -20,6 +21,7 @@ export class NukiConfig {
             appId = new Buffer(sodium.randombytes_buf(4)).readUInt32LE(0);
         }
 
+        this._name = name;
         this._uuid = uuid;
         this._paired = paired;
         this._credentials = credentials;
@@ -30,6 +32,7 @@ export class NukiConfig {
 
     serialize(): any {
         return {
+            name: this._name,
             uuid: this._uuid,
             paired: this._paired,
             credentials: this.credentials.serialize(),
@@ -37,6 +40,10 @@ export class NukiConfig {
             authorizationId: this._authorizationId,
             slUUID: arrayBufferToHex(this._slUUID!)
         };
+    }
+
+    get name(): string {
+        return this._name;
     }
 
     get uuid(): string {
@@ -106,6 +113,7 @@ export class NukiConfig {
                     );
 
                     let nukiConfig: NukiConfig = new NukiConfig(
+                        data.name,
                         data.uuid,
                         data.paired,
                         credentials,
@@ -132,6 +140,7 @@ export class NukiConfig {
 
     async save(path: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
+            console.log('writing config to', path);
             fs.writeFile(path + this.uuid + ".json", JSON.stringify(this.serialize()), (err) => {
                 if (err) {
                     reject(err);

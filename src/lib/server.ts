@@ -3,47 +3,99 @@ import { Nubli } from "./nubli";
 import { SmartLockPeripheralFilter } from "./smartLockPeripheralFilter";
 import { SmartLock } from "./smartLock";
 import { SmartLockResponse } from "./smartLockResponse";
+const path = require('path');
+const fs = require('fs');
 
 const app = express();
-const port = 8080; // default port to listen
+const port = process.env.PORT || 8080; // default port to listen
 
-class ActionResponse{
-    constructor(public success: boolean, public response?: SmartLockResponse, public message?: string){
+class ErrorResponse{
+    constructor(public message: string, public error?: any){
     }
 }
 
-// define a route handler for the default home page
-app.get("/:mac/lock", (req, res) => {
-    executeAction(req.params.mac, (smartLock) => {
-        return smartLock.lock()
+const directoryPath = './config/'
+
+//passsing directoryPath and callback function
+let configs = readConfigs();
+
+console.log(configs);
+
+app.get("/:name/lock", (req, res) => {
+    if(!configs[req.params.name]){
+        res.status(404).send('Lock not present in config');
+    }
+    executeAction(configs[req.params.name].uuid, (smartLock) => {
+        return lockUnlockAction(smartLock, (smartlock) => smartlock.lock());
     }).then(response => {
-        if(response.success){
-            res.status(200).send(response.response);
-        } else {
-            res.status(400).send(response.message);
-        }
+        res.status(200).send(response);
+    }).catch(err => {
+        res.status(400).send(err.message);
     });
 });
 
-// define a route handler for the default home page
-app.get("/:mac/unlock", (req, res) => {
-    executeAction(req.params.mac, (smartLock) => {
-        return smartLock.unlock()
+app.get("/:name/unlock", (req, res) => {
+    if(!configs[req.params.name]){
+        res.status(404).send('Lock not present in config');
+    }
+    executeAction(configs[req.params.name].uuid, (smartLock) => {
+        return lockUnlockAction(smartLock, (smartlock) => smartlock.unlock());
     }).then(response => {
-        if(response.success){
-            res.status(200).send(response.response);
-        } else {
-            res.status(400).send(response.message);
-        }
+        res.status(200).send(response);
+    }).catch(err => {
+        res.status(400).send(err.message);
     });
 });
 
-function executeAction(macAddress: string, action: (smartLock: SmartLock) => Promise<SmartLockResponse>): Promise<ActionResponse>{
-    return new Promise((resolve) => {
+app.get("/:mac/pair/:name", (req, res) => {
+    executeAction(req.params.mac, (lock) => {
+        return pairAction(req.params.name, lock);
+    }).then(() => {
+        configs = readConfigs();
+        res.status(200).send('Succesfully paired!');
+    }).catch(err => {
+        res.status(400).send(err.message);
+    });
+});
+
+async function pairAction(name: string, smartlock: SmartLock): Promise<string>{
+    return smartlock.pair(name)
+        .then(async () => {
+            console.log("successfully paired");
+            await smartlock.saveConfig(directoryPath);
+            await smartlock.disconnect();
+            return 'sucessfully paired';
+        })
+        .catch((error) => {
+            console.log("Pairing unsuccessful - error message: " + error);
+            return Promise.reject(new ErrorResponse('Pairing unsuccessful, ' + error, error));
+        });
+}
+
+async function lockUnlockAction(smartlock: SmartLock, action: (smartLock: SmartLock) => Promise<SmartLockResponse>): Promise<SmartLockResponse> {
+    if (smartlock.paired) {
+        console.log("Good we're paired");
+        const response = await action(smartlock).then(async (data) => {
+            await smartlock.disconnect();
+            return data;
+        });
+        if(response){
+            console.log(response);
+        }
+        return response;
+    } else {
+        console.log("Pair first :(");
+        await smartlock.disconnect();
+        return Promise.reject(new ErrorResponse('Please pair first'));
+    }
+}
+
+function executeAction<T>(macAddress: string, action: (smartLock: SmartLock) => Promise<T>): Promise<T>{
+    return new Promise((resolve, reject) => {
         const nubli = new Nubli(new SmartLockPeripheralFilter(macAddress));
 
         const timer = setTimeout(() => {
-            resolve(new ActionResponse(false, undefined, 'Could not execute action within 15 seconds'));
+            reject(new ErrorResponse('Could not execute action within 15 seconds'));
         }, 15000);
 
         nubli.on('state', (state) => {
@@ -57,7 +109,7 @@ function executeAction(macAddress: string, action: (smartLock: SmartLock) => Pro
                 .catch((err) => {
                     clearTimeout(timer);
                     console.log(err);
-                    resolve(new ActionResponse(false, undefined, 'Failed to scan'));
+                    reject(new ErrorResponse('Failed to scan'));
                 });
     
         nubli.on("smartLockDiscovered", async (smartlock: SmartLock) => {
@@ -76,28 +128,31 @@ function executeAction(macAddress: string, action: (smartLock: SmartLock) => Pro
             }
     
             return smartlock.connect()
-                    .then(async () => {
-                        if (smartlock.paired) {
-                            console.log("Good we're paired");
-                            let lockState = await action(smartlock);
-                            console.log(lockState);
-                            await smartlock.disconnect();
-                            clearTimeout(timer);
-                            resolve(new ActionResponse(true, lockState));
-                        } else {
-                            console.log("Pair first :(");
-                            await smartlock.disconnect();
-                            clearTimeout(timer);
-                            resolve(new ActionResponse(false,undefined, 'Please pair first'));
-                        }
-    
-                    }, (err) => {
+                    .then(() => {
+                        return action(smartlock).then((data) => {
+                            resolve(data);
+                        }).catch(err => {
+                            reject(err);
+                        })
+                    }).catch((err) => {
+                        reject(new ErrorResponse('Unknown error while connecting', err));
+                    }).finally(() => {
                         clearTimeout(timer);
-                        resolve(new ActionResponse(false, undefined, 'Unknown error while connecting'));
                     });
         });
     });
     
+}
+
+function readConfigs(){
+    const files = fs.readdirSync(directoryPath);
+    return files
+    .map((f: any) => fs.readFileSync(directoryPath + '/' + f))
+    .map((content: string) => JSON.parse(content))
+    .reduce((acum: any, current: any) => {
+        acum[current.name] = current;
+        return acum;
+    }, {});
 }
 
 // start the express server

@@ -1,0 +1,8 @@
+version: "2"
+services:
+    nubli:
+        image: giejay/nubli
+        volumes:
+          - ./config:/app/config
+        privileged: true
+        network_mode: host
