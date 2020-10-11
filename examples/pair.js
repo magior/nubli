@@ -1,5 +1,4 @@
 const nubli = require('../dist/index.js').default;
-nubli.peripheralFilter.macAddress = '54:D2:72:54:1A:95';
 
 nubli.setDebug(true);
 
@@ -13,38 +12,36 @@ nubli.onReadyToScan()
     });
 
 nubli.on("smartLockDiscovered", (smartlock) => {
-    if(smartlock.device.address === '54-d2-72-54-1a-95'){
-        nubli.stopScanning();
+    nubli.stopScanning();
 
-        smartlock.on("connected", () => {
-            console.log("connected");
-        });
+    smartlock.on("connected", () => {
+        console.log("connected");
+    });
 
-        smartlock.connect()
-            .then(async () => {
-                if (smartlock.configExists()) {
-                    await smartlock.readConfig();
-                }
+    smartlock.connect()
+        .then(async () => {
+            if (smartlock.configExists()) {
+                await smartlock.readConfig();
+            }
 
-                if (smartlock.paired) {
-                    console.log("already paired");
-                    await smartlock.disconnect();
-                    process.exit(0);
-                } else {
-                    smartlock.pair()
-                        .then(async () => {
-                            console.log("successfully paired");
-                            await smartlock.saveConfig(nubli.configPath);
-                            await smartlock.disconnect();
-                            process.exit(0);
-                        })
-                        .catch((error) => {
-                            console.log("Pairing unsuccessful - error message: " + error);
-                            process.exit(1);
-                        });
-                }
-            }, (err) => { 
-                console.log(err);
-            });
-    }
+            if (smartlock.paired) {
+                console.log("already paired");
+                await smartlock.disconnect();
+                process.exit(0);
+            } else {
+                smartlock.pair()
+                    .then(async () => {
+                        console.log("successfully paired");
+                        await smartlock.saveConfig(nubli.configPath);
+                        await smartlock.disconnect();
+                        process.exit(0);
+                    })
+                    .catch((error) => {
+                        console.log("Pairing unsuccessful - error message: " + error);
+                        process.exit(1);
+                    });
+            }
+        }, (err) => { 
+            console.log(err);
+    });
 });
