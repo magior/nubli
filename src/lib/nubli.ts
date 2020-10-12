@@ -7,13 +7,13 @@ import Events from 'events';
 export class Nubli extends Events.EventEmitter {
     private noble: typeof Noble = Noble;
     private debugEnabled: boolean = false;
-    private peripheralFilter: PeripheralFilter;
+    public peripheralFilter: SmartLockPeripheralFilter;
     private _smartlocks: Array<SmartLock> = [];
     private _configPath: string = "./config/";
     private _scanning: boolean = false;
     private activeScanning: boolean = false;
 
-    constructor(peripheralFilter: PeripheralFilter = new SmartLockPeripheralFilter(), configPath?: string) {
+    constructor(peripheralFilter: SmartLockPeripheralFilter = new SmartLockPeripheralFilter(), configPath?: string) {
         super();
 
         this.peripheralFilter = peripheralFilter;

@@ -4,5 +4,7 @@ services:
         image: giejay/nubli
         volumes:
           - ./config:/app/config
+        environment:
+          - PORT=5000
         privileged: true
         network_mode: host

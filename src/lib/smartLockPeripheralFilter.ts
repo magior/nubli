@@ -8,6 +8,7 @@ export class SmartLockPeripheralFilter implements PeripheralFilter {
     handle(peripheral: import("@abandonware/noble").Peripheral): boolean {
         let data: Buffer = peripheral.advertisement.manufacturerData;
 
+        console.log('found address', peripheral.address);
         if (this.macAddress) {
             return peripheral.address.replace(/-|:/g, '')===this.macAddress.replace(/-|:/g, '').toLowerCase();
         } else if (data!==undefined && data!==null && data.length==25) {

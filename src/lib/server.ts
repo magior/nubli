@@ -9,6 +9,39 @@ const fs = require('fs');
 const app = express();
 const port = process.env.PORT || 8080; // default port to listen
 
+const nubli = new Nubli(new SmartLockPeripheralFilter(''));
+nubli.setDebug(true);
+
+nubli.onReadyToScan().then(() => {
+    console.log("Ready to scan :)");
+    nubli.startScanning();
+});
+
+setTimeout(() => {
+    nubli.stopScanning();
+}, 10000);
+
+const { exec } = require("child_process");
+
+function resetBluetooth(): Promise<void>{
+    return new Promise((resolve) => {
+        exec("sudo hciconfig hci0 reset", (error: any, stdout:any, stderr:any) => {
+            if (error) {
+                console.log(`error: ${error.message}`);
+                return;
+            }
+            if (stderr) {
+                console.log(`stderr: ${stderr}`);
+                return;
+            }
+            console.log(`stdout: ${stdout}`);
+            resolve()
+        });
+    })
+}
+
+// resetBluetooth();
+
 class ErrorResponse{
     constructor(public message: string, public error?: any){
     }
@@ -20,6 +53,8 @@ const directoryPath = './config/'
 let configs = readConfigs();
 
 console.log(configs);
+
+const smartLocks: Map<string, SmartLock> = new Map<string, SmartLock>();
 
 app.get("/:name/lock", (req, res) => {
     if(!configs[req.params.name]){
@@ -92,56 +127,71 @@ async function lockUnlockAction(smartlock: SmartLock, action: (smartLock: SmartL
 
 function executeAction<T>(macAddress: string, action: (smartLock: SmartLock) => Promise<T>): Promise<T>{
     return new Promise((resolve, reject) => {
-        const nubli = new Nubli(new SmartLockPeripheralFilter(macAddress));
+        // nubli.removeAllListeners();
+        // if(smartLocks.has(macAddress)){
+        //     console.log('using cached smartlock')
+        //     return connectAndExecute(smartLocks.get(macAddress) as SmartLock, action, resolve, reject, undefined);
+        // } else {
+            const timer = setTimeout(() => {
+                // nubli.stopScanning();
+                reject(new ErrorResponse('Could not execute action within 15 seconds'));
+            }, 15000);
 
-        const timer = setTimeout(() => {
-            reject(new ErrorResponse('Could not execute action within 15 seconds'));
-        }, 15000);
-
-        nubli.on('state', (state) => {
-            console.log('state change', state);
-        })
-        nubli.onReadyToScan()
-                .then(() => {
-                    console.log("Ready to scan :)");
-                    nubli.startScanning();
-                })
-                .catch((err) => {
-                    clearTimeout(timer);
-                    console.log(err);
-                    reject(new ErrorResponse('Failed to scan'));
-                });
-    
-        nubli.on("smartLockDiscovered", async (smartlock: SmartLock) => {
-            nubli.stopScanning();
-    
-            smartlock.on("connected", () => {
-                console.log("connected");
-            });
-    
-            // smartlock.on('rssiUpdate', (rssi) => {
-            //     console.log(rssi);
+            console.log(nubli.smartlocks.map(s => (s as any).device.address));
+            return connectAndExecute(nubli.smartlocks.find(s => (s as any).device.address.replace(/-|:/g, '').toLowerCase() === macAddress.toLowerCase()) as SmartLock, action, resolve, reject, timer);
+            // nubli.on('state', (state) => {
+            //     console.log('state change', state);
             // })
-    
-            if (smartlock.configExists()) {
-                await smartlock.readConfig();
-            }
-    
-            return smartlock.connect()
-                    .then(() => {
-                        return action(smartlock).then((data) => {
-                            resolve(data);
-                        }).catch(err => {
-                            reject(err);
-                        })
-                    }).catch((err) => {
-                        reject(new ErrorResponse('Unknown error while connecting', err));
-                    }).finally(() => {
-                        clearTimeout(timer);
-                    });
-        });
+            // nubli.onReadyToScan()
+            //         .then(() => {
+            //             console.log("Ready to scan :)");
+            //             nubli.startScanning();
+            //         })
+            //         .catch((err) => {
+            //             clearTimeout(timer);
+            //             console.log(err);
+            //             reject(new ErrorResponse('Failed to scan'));
+            //         });
+        
+            // nubli.once("smartLockDiscovered", async (smartlock: SmartLock) => {
+            //     console.log('Discovered smart lock', smartlock);
+            //     smartLocks.set(macAddress, smartlock);
+            //     nubli.stopScanning();
+        
+            //     smartlock.once("connected", () => {
+            //         console.log("connected");
+            //     });
+        
+            //     // smartlock.on('rssiUpdate', (rssi) => {
+            //     //     console.log(rssi);
+            //     // })
+        
+            //     return connectAndExecute(smartlock, action, resolve, reject, timer);
+            // });
     });
     
+}
+
+async function connectAndExecute<T>(smartlock: SmartLock,  action: (smartLock: SmartLock) => Promise<T>, resolve: Function, reject: Function, timer: any){
+    // await resetBluetooth();
+    if (smartlock.configExists()) {
+        await smartlock.readConfig();
+    }
+    console.log('Going to connect', (smartlock as any).device.address)
+    smartlock.connect()
+        .then(() => {
+            console.log('connected!')
+            return action(smartlock).then((data) => {
+                resolve(data);
+            }).catch(err => {
+                reject(err);
+            })
+        }).catch((err) => {
+            console.log(err);
+            reject(new ErrorResponse('Unknown error while connecting', err));
+        }).finally(() => {
+            clearTimeout(timer);
+        });
 }
 
 function readConfigs(){

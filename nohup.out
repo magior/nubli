@@ -1,0 +1,233 @@
+{
+  Schuur: {
+    name: 'Schuur',
+    uuid: '54d2721a1d6c',
+    paired: true,
+    credentials: {
+      slPublicKey: '4f65f39a9de01aea12eaac954ca475af0ac5110d39399ae9fdf1176d1569150f',
+      publicKey: 'b84e9b031c6c5c3e6167dc21911ea60529c60f8799a030e665e312123aebe404',
+      privateKey: 'db88da6a88f6948a7c1b90883c7162ca1dc11f0b6377c59f47ff8c1be66d313b',
+      sharedSecret: '4f58d059d46278abb3042d4c209de3727704cb37ba3695fd4abf95caa1b00b58'
+    },
+    appId: 3855081272,
+    authorizationId: 3431675,
+    slUUID: '1059d5acf22a027be614d4a231bf378c'
+  },
+  Achterdeur: {
+    name: 'Achterdeur',
+    uuid: '54d272541a95',
+    paired: true,
+    credentials: {
+      slPublicKey: 'afc1d520794e8c12122fc9e4799ad91fa2f1a7263919c0891bc20dae83298212',
+      publicKey: 'fb467f3f7c0b9dffdf412ebdf627bfc70784bc1dd931305db0da2e3f3cb8e831',
+      privateKey: '5f50ebc1aec1ade7e15d6c5c1a7180a30821b47f97ae294f1e09e70733b57866',
+      sharedSecret: '80606fce09bd87b5868a95474be51eda5165aa865c2fba150328c1a0ee5b7c00'
+    },
+    appId: 3467873955,
+    authorizationId: 3431719,
+    slUUID: '1074de8b6cccaa9f91dc3f6530be2c79'
+  }
+}
+server started at http://localhost:8080
+{
+  Schuur: {
+    name: 'Schuur',
+    uuid: '54d2721a1d6c',
+    paired: true,
+    credentials: {
+      slPublicKey: '4f65f39a9de01aea12eaac954ca475af0ac5110d39399ae9fdf1176d1569150f',
+      publicKey: 'b84e9b031c6c5c3e6167dc21911ea60529c60f8799a030e665e312123aebe404',
+      privateKey: 'db88da6a88f6948a7c1b90883c7162ca1dc11f0b6377c59f47ff8c1be66d313b',
+      sharedSecret: '4f58d059d46278abb3042d4c209de3727704cb37ba3695fd4abf95caa1b00b58'
+    },
+    appId: 3855081272,
+    authorizationId: 3431675,
+    slUUID: '1059d5acf22a027be614d4a231bf378c'
+  },
+  Achterdeur: {
+    name: 'Achterdeur',
+    uuid: '54d272541a95',
+    paired: true,
+    credentials: {
+      slPublicKey: 'afc1d520794e8c12122fc9e4799ad91fa2f1a7263919c0891bc20dae83298212',
+      publicKey: 'fb467f3f7c0b9dffdf412ebdf627bfc70784bc1dd931305db0da2e3f3cb8e831',
+      privateKey: '5f50ebc1aec1ade7e15d6c5c1a7180a30821b47f97ae294f1e09e70733b57866',
+      sharedSecret: '80606fce09bd87b5868a95474be51eda5165aa865c2fba150328c1a0ee5b7c00'
+    },
+    appId: 3467873955,
+    authorizationId: 3431719,
+    slUUID: '1074de8b6cccaa9f91dc3f6530be2c79'
+  }
+}
+server started at http://localhost:5000
+(node:2774) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+state change poweredOn
+Ready to scan :)
+Ready to scan :)
+connected
+Good we're paired
+SmartLockResponse {
+  data: {
+    nukiState: 2,
+    lockState: 3,
+    trigger: 0,
+    currentTime: 2020-10-12T12:45:42.000Z,
+    battery_critical: false,
+    configUpdateCount: 3,
+    lockNGoTimer: 0,
+    lastLockAction: 1,
+    lastLockActionTrigger: 0,
+    lastLockActionCompletionStatus: 0,
+    doorSensorState: 1
+  },
+  success: true,
+  message: null
+}
+Ready to scan :)
+{
+  Schuur: {
+    name: 'Schuur',
+    uuid: '54d2721a1d6c',
+    paired: true,
+    credentials: {
+      slPublicKey: '4f65f39a9de01aea12eaac954ca475af0ac5110d39399ae9fdf1176d1569150f',
+      publicKey: 'b84e9b031c6c5c3e6167dc21911ea60529c60f8799a030e665e312123aebe404',
+      privateKey: 'db88da6a88f6948a7c1b90883c7162ca1dc11f0b6377c59f47ff8c1be66d313b',
+      sharedSecret: '4f58d059d46278abb3042d4c209de3727704cb37ba3695fd4abf95caa1b00b58'
+    },
+    appId: 3855081272,
+    authorizationId: 3431675,
+    slUUID: '1059d5acf22a027be614d4a231bf378c'
+  },
+  Achterdeur: {
+    name: 'Achterdeur',
+    uuid: '54d272541a95',
+    paired: true,
+    credentials: {
+      slPublicKey: 'afc1d520794e8c12122fc9e4799ad91fa2f1a7263919c0891bc20dae83298212',
+      publicKey: 'fb467f3f7c0b9dffdf412ebdf627bfc70784bc1dd931305db0da2e3f3cb8e831',
+      privateKey: '5f50ebc1aec1ade7e15d6c5c1a7180a30821b47f97ae294f1e09e70733b57866',
+      sharedSecret: '80606fce09bd87b5868a95474be51eda5165aa865c2fba150328c1a0ee5b7c00'
+    },
+    appId: 3467873955,
+    authorizationId: 3431719,
+    slUUID: '1074de8b6cccaa9f91dc3f6530be2c79'
+  }
+}
+server started at http://localhost:8080
+{
+  Schuur: {
+    name: 'Schuur',
+    uuid: '54d2721a1d6c',
+    paired: true,
+    credentials: {
+      slPublicKey: '4f65f39a9de01aea12eaac954ca475af0ac5110d39399ae9fdf1176d1569150f',
+      publicKey: 'b84e9b031c6c5c3e6167dc21911ea60529c60f8799a030e665e312123aebe404',
+      privateKey: 'db88da6a88f6948a7c1b90883c7162ca1dc11f0b6377c59f47ff8c1be66d313b',
+      sharedSecret: '4f58d059d46278abb3042d4c209de3727704cb37ba3695fd4abf95caa1b00b58'
+    },
+    appId: 3855081272,
+    authorizationId: 3431675,
+    slUUID: '1059d5acf22a027be614d4a231bf378c'
+  },
+  Achterdeur: {
+    name: 'Achterdeur',
+    uuid: '54d272541a95',
+    paired: true,
+    credentials: {
+      slPublicKey: 'afc1d520794e8c12122fc9e4799ad91fa2f1a7263919c0891bc20dae83298212',
+      publicKey: 'fb467f3f7c0b9dffdf412ebdf627bfc70784bc1dd931305db0da2e3f3cb8e831',
+      privateKey: '5f50ebc1aec1ade7e15d6c5c1a7180a30821b47f97ae294f1e09e70733b57866',
+      sharedSecret: '80606fce09bd87b5868a95474be51eda5165aa865c2fba150328c1a0ee5b7c00'
+    },
+    appId: 3467873955,
+    authorizationId: 3431719,
+    slUUID: '1074de8b6cccaa9f91dc3f6530be2c79'
+  }
+}
+server started at http://localhost:5000
+(node:3121) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+state change poweredOn
+Ready to scan :)
+connected
+Good we're paired
+SmartLockResponse {
+  data: {
+    nukiState: 2,
+    lockState: 3,
+    trigger: 0,
+    currentTime: 2020-10-12T12:48:42.000Z,
+    battery_critical: false,
+    configUpdateCount: 6,
+    lockNGoTimer: 0,
+    lastLockAction: 1,
+    lastLockActionTrigger: 0,
+    lastLockActionCompletionStatus: 0,
+    doorSensorState: 4
+  },
+  success: true,
+  message: null
+}
+Ready to scan :)
+connected
+Good we're paired
+SmartLockResponse {
+  data: {
+    nukiState: 2,
+    lockState: 1,
+    trigger: 0,
+    currentTime: 2020-10-12T12:49:11.000Z,
+    battery_critical: false,
+    configUpdateCount: 6,
+    lockNGoTimer: 0,
+    lastLockAction: 2,
+    lastLockActionTrigger: 0,
+    lastLockActionCompletionStatus: 0,
+    doorSensorState: 4
+  },
+  success: true,
+  message: null
+}
+Ready to scan :)
+Ready to scan :)
+connected
+Good we're paired
+SmartLockResponse {
+  data: {
+    nukiState: 2,
+    lockState: 3,
+    trigger: 0,
+    currentTime: 2020-10-12T12:52:43.000Z,
+    battery_critical: false,
+    configUpdateCount: 6,
+    lockNGoTimer: 0,
+    lastLockAction: 1,
+    lastLockActionTrigger: 0,
+    lastLockActionCompletionStatus: 0,
+    doorSensorState: 4
+  },
+  success: true,
+  message: null
+}
+Ready to scan :)
+Ready to scan :)
+state change poweredOff
+state change poweredOff
+state change poweredOff
+state change poweredOff
+state change poweredOff
+state change poweredOff
+Adapter still not ready after 10 seconds
+/home/pi/nubli/node_modules/@abandonware/noble/lib/hci-socket/hci.js:100
+    this._deviceId = this._socket.bindRaw(deviceId);
+                                  ^
+
+Error: EALREADY, Operation already in progress
+    at Hci.init (/home/pi/nubli/node_modules/@abandonware/noble/lib/hci-socket/hci.js:100:35)
+    at Hci.pollIsDevUp (/home/pi/nubli/node_modules/@abandonware/noble/lib/hci-socket/hci.js:115:14)
+    at listOnTimeout (internal/timers.js:554:17)
+    at processTimers (internal/timers.js:497:7) {
+  errno: 114,
+  code: 'EALREADY',
+  syscall: 'bind'
+}
