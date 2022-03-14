@@ -1,5 +1,5 @@
 import { SmartLockCommand } from "./SmartLockCommand";
-import { Command } from "../states";
+import { Command, LockState, DoorSensor } from "../states";
 import { SmartLock } from "../smartLock";
 import { NukiConfig } from "../nukiConfig";
 
@@ -15,7 +15,7 @@ export class KeyTurnerStatesCommand extends SmartLockCommand {
 
     handleData(command: number, payload: Buffer): void {
         this._response.data.nukiState = payload.readUInt8(0);
-        this._response.data.lockState = payload.readUInt8(1);
+        this._response.data.lockState = LockState[payload.readUInt8(1)];
         this._response.data.trigger = payload.readUInt8(2);
 
         let year: number = payload.readUInt16LE(3);
@@ -36,7 +36,7 @@ export class KeyTurnerStatesCommand extends SmartLockCommand {
         this._response.data.lastLockAction = payload.readUInt8(15);
         this._response.data.lastLockActionTrigger = payload.readUInt8(16);
         this._response.data.lastLockActionCompletionStatus = payload.readUInt8(17);
-        this._response.data.doorSensorState = payload.readUInt8(18);
+        this._response.data.doorSensorState = DoorSensor[payload.readUInt8(18)];
 
         this._complete = true;
     }

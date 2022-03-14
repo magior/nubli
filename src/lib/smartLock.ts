@@ -14,6 +14,7 @@ import { ChallengeCommand } from "./smartLockCommands/ChallengeCommand";
 import { RequestConfigCommand } from "./smartLockCommands/RequestConfigCommand";
 import { RequestAdvancedConfigCommand } from "./smartLockCommands/RequestAdvancedConfigCommand";
 import { RequestAuthorizationsCommand } from "./smartLockCommands/RequestAuthorizationsCommand";
+import { RequestLogsCommand } from "./smartLockCommands/RequestLogsCommand";
 
 export class SmartLock extends Events.EventEmitter {
     static readonly NUKI_SERVICE_UUID = "a92ee200550111e4916c0800200c9a66";
@@ -72,6 +73,7 @@ export class SmartLock extends Events.EventEmitter {
 
     updateManufacturerData(data: Buffer): void {
         // See: https://developer.nuki.io/t/bluetooth-specification-questions/1109/3
+	    //this.debug(data.toString('hex').toUpperCase());
         if (data.length == 25) {
             let type: number = data.readUInt8(2);
             let dataLength: number = data.readUInt8(3);
@@ -96,7 +98,8 @@ export class SmartLock extends Events.EventEmitter {
 
                     // Smart Lock sets rssi to -59 if an entry to the activity log has been added.
                     // Once the bridge has read the new state the rssi value will be set back to -60.
-                    if (rssi == -59) {
+	            // Smart Lock 3.0 change values to -55/-56.
+                    if (rssi == -55) {
                         if (!this.stateChanged || (new Date().getTime() - this.stateChanged.getTime()) / 1000 > 60) {
                             this.stateChanged = new Date();
                             this.emit("activityLogChanged");
@@ -412,6 +415,12 @@ export class SmartLock extends Events.EventEmitter {
         this.debug("Requesting authorizations");
 
         return await this.executeCommand(new RequestAuthorizationsCommand(pin, offset, count));
+    }
+
+    async requestLogs(pin: number, count: number, sort: number): Promise<SmartLockResponse> {
+        this.debug("Requesting logs");
+
+        return await this.executeCommand(new RequestLogsCommand(pin, count, sort));
     }
 
     private async setupUSDIOListener(): Promise<void> {
